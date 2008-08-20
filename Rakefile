@@ -31,7 +31,7 @@ require 'rake/gempackagetask'
 require 'rake/rdoctask'
 require 'fileutils'
 
-version = "0.7"
+version = "0.8"
 name = "rest-client"
 
 spec = Gem::Specification.new do |s|
@@ -39,7 +39,7 @@ spec = Gem::Specification.new do |s|
 	s.version = version
 	s.summary = "Simple REST client for Ruby, inspired by microframework syntax for specifying actions."
 	s.description = "A simple REST client for Ruby, inspired by the Sinatra microframework style of specifying actions: get, put, post, delete."
-	s.author = "Adam Wiggins"
+	s.authors = ["Adam Wiggins", "Filip H.F. Slagter"]
 	s.email = "adam@heroku.com"
 	s.homepage = "http://rest-client.heroku.com/"
 	s.rubyforge_project = "rest-client"
