@@ -168,6 +168,7 @@ module RestClient
 		end
 
 		def process_result(res)
+      puts "HTTP status code: #{res.code}\n"
 			if %w(200 201 202).include? res.code
 				decode res['content-encoding'], res.body
 			elsif %w(301 302 303).include? res.code
@@ -186,7 +187,6 @@ module RestClient
 				raise ResourceNotFound
       elsif res.code == "422"
         puts "Unprocessable Entity"
-        puts "HTTP status code #{res.code}\n"
         puts res.body
         res
 			else
