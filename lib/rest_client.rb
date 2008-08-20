@@ -170,7 +170,8 @@ module RestClient
 		def process_result(res)
       puts "HTTP status code: #{res.code}\n"
 			if %w(200 201 202).include? res.code
-				decode res['content-encoding'], res.body
+				puts decode(res['content-encoding'], res.body)
+        res
 			elsif %w(301 302 303).include? res.code
 				url = res.header['Location']
 
