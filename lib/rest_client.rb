@@ -184,6 +184,11 @@ module RestClient
 				raise Unauthorized
 			elsif res.code == "404"
 				raise ResourceNotFound
+      elsif res.code == "422"
+        puts "Unprocessable Entity"
+        puts "HTTP status code #{res.code}\n"
+        puts res.body
+        res
 			else
 				raise RequestFailed, res
 			end
