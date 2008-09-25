@@ -62,7 +62,7 @@ module RestClient
 		end
 
 		def to_s
-			message
+			"%s\n%s" % [message,@response.body]
 		end
 	end
 end
