@@ -29,6 +29,9 @@ require File.dirname(__FILE__) + '/request_errors'
 #   # DELETE
 #   RestClient.delete 'http://example.com/resource'
 #
+#   # HEAD
+#   RestClient.head 'http://example.com/resource'
+#
 # To use with a proxy, just set RestClient.proxy to the proper http proxy:
 #
 #   RestClient.proxy = "http://proxy.example.com/"

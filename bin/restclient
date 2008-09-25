@@ -7,7 +7,7 @@ require "yaml"
 
 def usage(why = nil)
 	puts "failed for reason: #{why}" if why
-	puts "usage: restclient [get|put|post|delete] url|name [username] [password]"
+	puts "usage: restclient [get|put|post|delete|head] url|name [username] [password]"
 	puts "  The verb is optional, if you leave it off you'll get an interactive shell."
 	puts "  put and post both take the input body on stdin."
 	exit(1)
