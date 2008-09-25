@@ -112,7 +112,7 @@ describe RestClient do
 		end
 
 		it "determines the Net::HTTP class to instantiate by the method name" do
-			@request.net_http_class(:put).should == Net::HTTP::Put
+			@request.net_http_request_class(:put).should == Net::HTTP::Put
 		end
 
 		it "merges user headers with the default headers" do
@@ -133,7 +133,7 @@ describe RestClient do
 		it "executes by constructing the Net::HTTP object, headers, and payload and calling transmit" do
 			@request.should_receive(:parse_url_with_auth).with('http://some/resource').and_return(@uri)
 			klass = mock("net:http class")
-			@request.should_receive(:net_http_class).with(:put).and_return(klass)
+			@request.should_receive(:net_http_request_class).with(:put).and_return(klass)
 			klass.should_receive(:new).and_return('result')
 			@request.should_receive(:transmit).with(@uri, 'result', 'payload')
 			@request.execute_inner
@@ -255,6 +255,15 @@ describe RestClient do
 		it "raises RequestFailed otherwise" do
 			res = mock('response', :code => '500')
 			lambda { @request.process_result(res) }.should raise_error(RestClient::RequestFailed)
+		end
+
+		it "creates a proxy class if a proxy url is given" do
+			RestClient.stub!(:proxy).and_return("http://example.com/")
+			@request.net_http_class.should include(Net::HTTP::ProxyDelta)
+		end
+
+		it "creates a non-proxy class if a proxy url is not given" do
+		  @request.net_http_class.should_not include(Net::HTTP::ProxyDelta)
 		end
 
 		it "logs a get request" do

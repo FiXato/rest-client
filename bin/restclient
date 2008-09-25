@@ -7,8 +7,16 @@ require "yaml"
 
 def usage(why = nil)
 	puts "failed for reason: #{why}" if why
-	puts "usage: restclient url|name [username] [password]"
+	puts "usage: restclient [get|put|post|delete] url|name [username] [password]"
+	puts "  The verb is optional, if you leave it off you'll get an interactive shell."
+	puts "  put and post both take the input body on stdin."
 	exit(1)
+end
+
+if %w(get put post delete).include? ARGV.first
+	@verb = ARGV.shift
+else
+	@verb = nil
 end
 
 @url = ARGV.shift || 'http://localhost:4567'
@@ -22,13 +30,27 @@ else
 end
 
 usage("invalid url '#{@url}") unless @url =~ /^https?/
-usage("to few args") unless ARGV.size < 3
+usage("too few args") unless ARGV.size < 3
 
 def r
 	@r ||= RestClient::Resource.new(@url, @username, @password)
 end
 
 r # force rc to load
+
+if @verb
+	begin
+		if %w(put post).include? @verb
+			puts r.send(@verb, STDIN.read)
+		else
+			puts r.send(@verb)
+		end
+		exit 0
+	rescue RestClient::Exception => e
+		puts e.response.body if e.respond_to? :response
+		raise
+	end
+end
 
 %w(get post put delete).each do |m|
  eval <<-end_eval
@@ -43,7 +65,7 @@ def method_missing(s, *args, &b)
 	begin
 		r.send(s, *args, &b)
 	rescue RestClient::RequestFailed => e
-		puts e.response.body
+		print STDERR, e.response.body
 		raise e
 	end
 end

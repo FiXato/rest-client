@@ -29,6 +29,14 @@ require File.dirname(__FILE__) + '/request_errors'
 #   # DELETE
 #   RestClient.delete 'http://example.com/resource'
 #
+# To use with a proxy, just set RestClient.proxy to the proper http proxy:
+#
+#   RestClient.proxy = "http://proxy.example.com/"
+#
+# Or inherit the proxy from the environment:
+#
+#   RestClient.proxy = ENV['http_proxy']
+#
 # For live tests of RestClient, try using http://rest-test.heroku.com, which echoes back information about the rest call:
 #
 #   >> RestClient.put 'http://rest-test.heroku.com/resource', :foo => 'baz'
@@ -59,6 +67,10 @@ module RestClient
 		Request.execute(:method => :delete,
 			:url => url,
 			:headers => headers)
+	end
+
+	class <<self
+		attr_accessor :proxy
 	end
 
 	# Print log of RestClient calls.  Value can be stdout, stderr, or a filename.
@@ -99,7 +111,7 @@ module RestClient
 
 		def execute_inner
 			uri = parse_url_with_auth(url)
-			transmit uri, net_http_class(method).new(uri.request_uri, make_headers(headers)), payload
+			transmit uri, net_http_request_class(method).new(uri.request_uri, make_headers(headers)), payload
 		end
 
 		def make_headers(user_headers)
@@ -111,7 +123,16 @@ module RestClient
 			final
 		end
 
-		def net_http_class(method)
+		def net_http_class
+			if RestClient.proxy
+				proxy_uri = URI.parse(RestClient.proxy)
+				Net::HTTP::Proxy(proxy_uri.host, proxy_uri.port, proxy_uri.user, proxy_uri.password)
+			else
+				Net::HTTP
+			end
+		end
+
+		def net_http_request_class(method)
 			Net::HTTP.const_get(method.to_s.capitalize)
 		end
 
@@ -147,7 +168,7 @@ module RestClient
 		def transmit(uri, req, payload)
 			setup_credentials(req)
 
-			net = Net::HTTP.new(uri.host, uri.port)
+			net = net_http_class.new(uri.host, uri.port)
 			net.use_ssl = uri.is_a?(URI::HTTPS)
 
 			display_log request_log
