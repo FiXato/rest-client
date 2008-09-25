@@ -34,6 +34,14 @@ module RestClient
 				:headers => headers)
 		end
 
+    def head(headers={})
+      Request.execute(:method => :head,
+        :url => url,
+        :user => user,
+        :password => password,
+        :headers => headers)
+    end
+
 		def post(payload, headers={})
 			Request.execute(:method => :post,
 				:url => url,

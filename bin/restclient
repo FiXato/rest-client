@@ -13,7 +13,7 @@ def usage(why = nil)
 	exit(1)
 end
 
-if %w(get put post delete).include? ARGV.first
+if %w(get put post delete head).include? ARGV.first
 	@verb = ARGV.shift
 else
 	@verb = nil
@@ -52,7 +52,7 @@ if @verb
 	end
 end
 
-%w(get post put delete).each do |m|
+%w(get post put delete head).each do |m|
  eval <<-end_eval
 def #{m}(path, *args, &b)
 	r[path].#{m}(*args, &b)

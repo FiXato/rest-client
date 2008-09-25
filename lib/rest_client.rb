@@ -49,6 +49,12 @@ module RestClient
 			:headers => headers)
 	end
 
+  def self.head(url, headers={})
+    Request.execute(:method => :head,
+      :url => url,
+      :headers => headers)
+  end
+
 	def self.post(url, payload, headers={})
 		Request.execute(:method => :post,
 			:url => url,
@@ -235,7 +241,7 @@ module RestClient
 		end
 
 		def response_log(res)
-			"# => #{res.code} #{res.class.to_s.gsub(/^Net::HTTP/, '')} | #{(res['Content-type'] || '').gsub(/;.*$/, '')} #{res.body.size} bytes"
+			"# => #{res.code} #{res.class.to_s.gsub(/^Net::HTTP/, '')} | #{(res['Content-type'] || '').gsub(/;.*$/, '')} #{res.body.size rescue 0} bytes"
 		end
 
 		def display_log(msg)
